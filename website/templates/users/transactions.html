@@ -1,0 +1,52 @@
+{% extends "template.html" %}
+
+{% block title %}
+Book Transactions
+{% endblock %}
+{% block content %}
+
+<table id="userTable" class="w-full flex-no-wrap sm:bg-white overflow-hidden sm:shadow-lg my-5">
+
+    <tr
+    class="text-white bg-blue-700">
+    <th class="p-3 text-left">Id</th>
+    <th class="p-3 text-left">Member Id</th>
+    <th class="p-3 text-left">Book Id</th>
+    <th class="p-3 text-left">Issued</th>
+    <th class="p-3 text-left">Status</th>
+  </tr>
+
+    <tbody id="usersTableContent">
+
+      {% for t in transactions %}
+
+      <tr id="{{ t.id }}" class="border-blue-900 border-2 border-t-0 mb-2 sm:mb-0 hover:bg-blue-50 mb-2">
+        <td class="border-blue-900 border p-2 text-center">{{ t.id }}</td>
+        <td class="border-blue-900 border p-2 text-center">{{ t.user_id }}
+            <a href="/users/{{ t.user_id }}"
+          class="text-center text-lg py-1 px-2 border-green-600 border rounded-xl bg-green-700 text-white hover:bg-green-900"><i class="fas fa-edit"></i>
+        </a>
+        </td>
+        <td class="border-blue-900 border p-2 text-center">{{ t.book_id }}
+            <a href="/books/{{ t.book_id }}"
+          class="text-center text-lg py-1 px-2 border-green-600 border rounded-xl bg-green-700 text-white hover:bg-green-900"><i class="fas fa-edit"></i>
+        </a>
+        </td>
+        <td class="border-blue-900 border p-2 text-center">{{ t.issued.date() }}</td>
+        <td class="border-blue-900 border p-2 text-center">
+          {% if t.status %}
+          Active
+          {% else %}
+          Returned
+          {% endif %}
+        </td>
+
+      </tr>
+
+      {% endfor %}
+
+    </tbody>
+
+  </table>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+<div class="mt-4">
+    <div class="w-full text-xl bg-blue-900 text-white text-center py-1 rounded-md">Issue this Book</div>
+    <table class="mt-1 border-collapse border border-black p-1 px-2 w-full p-2">
+     <tr class="flex flex-col md:table-row">
+         <td class="w-full md:w-2/5 lg:w-1/4 border border-black p-1 px-2 font-bold">Member</td>
+         <td class="p-1 px-2 flex flex-col md:flex-row">
+             <select onchange="selectTypeChange(this.value)" class="bg-blue-700 font-bold text-white" id="member">
+                 <option value="0">Member Id</option>
+                 {% for member in members %}
+                     <option value="{{ member[0] }}">{{ member[0] }}</option>
+                 {% endfor %}
+               </select>
+               <span id="details" class="px-4 mt-2 lg:mt-0">Select Member by Id to Issue the Book</span>
+         </td>
+     </tr>
+     </table>
+
+     <div class="flex flex-col lg:flex-row my-2">
+         <button onclick="issueBook('{{db_book_id}}')"class="py-1 px-2 bg-blue-900 shadow-md text-white rounded-lg text-lg hover:bg-blue-800">Issue</button>
+         <p class="py-1 px-2" id="result">Initial Book rent <i class="fas fa-rupee-sign"></i>15, then <i class="fas fa-rupee-sign"></i>5 per day</p>
+     </div>
+
+
+     <div class="w-full text-xl bg-blue-900 text-white text-center py-1 mt-4 rounded-md">Current Issues</div>
+
+     <table id="userTable" class="w-full flex-no-wrap sm:bg-white overflow-hidden sm:shadow-lg my-5">
+     <tr class="text-white bg-blue-700">
+     <th class="p-2 text-left">Id</th>
+     <th class="p-2 text-left border-l ">Member</th>
+     <th class="p-2 text-left border-l ">Issued</th>
+     <th class="p-2 text-left border-l">status</th>
+     <th class="p-2 text-left border-l">Return</th>
+   </tr>
+ 
+     <tbody id="usersTableContent">
+ 
+       {% for t in issued %}
+ 
+       <tr id="{{ t.id }}" class="border-blue-900 border-2 border-t-0 mb-2 sm:mb-0 hover:bg-blue-50 mb-2">
+         <td class="border-blue-900 border p-2 text-center">{{ t.id }}</td>
+         <td class="border-blue-900 border p-2 text-center">{{ t.user_id }}</td>
+         <td class="border-blue-900 border p-2 text-center">{{ t.issued.date() }}</td>
+        
+             {% if t.status %}
+             <td id="{{t.id}}-status" class="border-blue-900 border p-2 text-center">Active</td>
+             <td class="border-blue-900 border p-2 text-center" id="{{t.id}}-return">
+              <button onclick="returnBook('{{ t.id }}')" class="text-white rounded-md font-bold px-2 hover:bg-red-600 py-1 bg-red-700">Return</button>
+          </td>
+             {% else %}
+             <td id="{{t.id}}-status" class="border-blue-900 border p-2 text-center">Returned</td>
+             <td class="border-blue-900 border p-2 text-center" id="{{t.id}}-return">{{t.returned.date()}}</td>
+             {% endif %}
+
+       </tr>
+ 
+       {% endfor %}
+ 
+     </tbody>
+     </table>
+
+ </div>
+
+
+ <script src="{{ url_for('static', filename='scripts/books/transactions.js') }}"></script>

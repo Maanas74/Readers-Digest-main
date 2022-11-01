@@ -1,0 +1,5 @@
+flask
+Flask-SQLAlchemy
+requests
+flask_login
+sendgrid

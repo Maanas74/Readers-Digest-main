@@ -1,0 +1,92 @@
+{% extends "template.html" %}
+
+{% block title %}
+Book in Detail
+{% endblock %}
+
+{% block content %}
+
+<div class="mx-2">
+
+    {% if book %}
+
+    <div class="flex flex-col md:flex-row justify-evenly">
+        <div class="flex justify-center items-cente h-1/2r">
+            <img src="{{ book.volumeInfo.imageLinks.thumbnail }}"
+                class="rounded-md shadow-lg">
+        </div>
+        <div class="flex justify-evenly flex-col items-center mt-4 md:mt-0">
+            <table class="border-collapse border border-black p-1 px-2 p-2">
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Title</td>
+                    <td class="border border-black p-1 px-2 ">{{ book.volumeInfo.title }}</td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Author</td>
+                    <td class="border border-black p-1 px-2 ">{{ book.volumeInfo.authors[0] }}</td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Google ID</td>
+                    <td class="border border-black p-1 px-2 ">{{ book.id }}</td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">ISBN</td>
+                    <td class="border border-black p-1 px-2 ">{{ book.volumeInfo.industryIdentifiers[0].identifier }}</td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Likes</td>
+                    <td class="border border-black p-1 px-2 ">{{ book.likes }}</td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Availability</td>
+                    <td id="bookAvailability" class="border border-black p-1 px-2 text-green-500 p-1 px-2 font-bold">
+                        Available <i class="text-lg fas fa-thumbs-up"></i></td>
+
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Rating</td>
+                    <td class="border border-black p-1 px-2 ">{{ book.volumeInfo.averageRating or 'Not available' }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- <button class="hover:bg-red-700 bg-red-900 text-white font-bold text-xl p-3" onclick="removeFromFavs('{{ book.id }}')">Delete this book</button> -->
+    <hr class="my-2">
+    <!-- Add book description -->
+    <div class="w-full break-words">
+        <span class="font-bold">Description:</span> 
+        <span id="bookDescription">
+            {% autoescape false %}{{ book.volumeInfo.description }}{% endautoescape %}
+        </span>
+    </div>
+
+    <hr class="mt-2">
+
+    {% if user.is_admin %}
+        {% include 'books/admin_book.html' %}
+    {% else %}
+    <!-- add buttons for add to fav, remove from fav -->
+    <div class="flex justify-evenly">
+        <button class="hover:bg-blue-700 bg-blue-900 text-white font-bold p-3" onclick="addToFavs('{{ book.id }}')">Add to favorites</button>
+        <button class="hover:bg-blue-700 bg-blue-900 text-white font-bold p-3" onclick="removeFromFavs('{{ book.id }}')">Delete this book</button>
+    </div>
+    
+    {% endif %}
+
+
+    {% else %}
+
+    <div class="text-center">
+        <h1 class="text-3xl font-bold">Book not found</h1>
+        <a href="/books" class="text-blue-500 hover:text-blue-600">Go back</a>
+        <p class="text-sm text-blue-500 font-bold">{{ error }}</p>
+    </div>
+
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='scripts/books/browse.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/books/favs.js') }}"></script>
+    
+</div>
+
+{% endblock %}

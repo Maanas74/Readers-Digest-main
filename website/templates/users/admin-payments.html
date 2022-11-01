@@ -1,0 +1,33 @@
+<div class="flex flex-col lg:flex-row my-2">
+    <input id="amountToBeAdded" class="border-2 border-blue-900 text-black rounded mr-1 py-1 px-2" type="integer"
+        placeholder="Credit">
+    <button onclick="addCredit('{{user_details.id}}')"
+        class="py-1 px-2 bg-blue-900 shadow-md text-white rounded text-lg hover:bg-blue-800">Add</button>
+    <p class="py-1 px-2" id="result">You can add a Minimum of <i class="fas fa-rupee-sign"></i>100, Max allowance till you reach a <i class="fas fa-rupee-sign"></i>500 balance
+</div>
+
+<p class="w-full text-xl bg-blue-900 text-white text-center py-1 mt-4 rounded-md">Payments</p>
+
+<table id="userTable" class="w-full flex-no-wrap sm:bg-white overflow-hidden sm:shadow-lg my-5">
+    <tr class="text-white bg-blue-700">
+        <th class="p-2 text-left">Id</th>
+        <th class="p-2 text-left border-l ">Amount (<i class="fas fa-rupee-sign"></i>)</th>
+        <th class="p-2 text-left border-l ">Date</th>
+    </tr>
+
+    <tbody id="usersPaymentTableContent">
+
+        {% for t in user_details.payments %}
+
+        <tr id="{{ t.id }}" class="border-blue-900 border-2 border-t-0 mb-2 sm:mb-0 hover:bg-blue-50 mb-2">
+            <td class="border-blue-900 border p-2 text-center">{{ t.id }}</td>
+            <td class="border-blue-900 border p-2 text-center">{{ t.amount }}</td>
+            <td class="border-blue-900 border p-2 text-center">{{ t.date.date() }}</td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+
+<script src="{{ url_for('static', filename='scripts/payments.js') }}"></script>

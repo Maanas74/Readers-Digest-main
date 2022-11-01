@@ -1,0 +1,66 @@
+{% extends "template.html" %}
+
+
+{% block title %}
+Books History
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="">
+
+        <div class="w-full text-xl bg-blue-900 text-white text-center py-2 rounded-md flex justify-evenly flow-col ">
+            <span>filter
+                <i class="fas fa-filter"></i>
+                By status
+            </span>
+            <select onchange="filterTransactions(this.value)" class="w-1/3 bg-blue-900 text-white text-center py-2 rounded-md flex justify-evenly">
+                <option value="All">All</option>
+                <option value="False">Returned</option>
+                <option value="True">Active</option>
+            </select>
+        </div>
+
+        <table id="userTable" class="w-full flex-no-wrap sm:bg-white overflow-hidden sm:shadow-lg my-5">
+            <tr class="text-white bg-blue-700">
+                <th class="p-2 text-left">Id</th>
+                <th class="p-2 text-left border-l ">Book</th>
+                <th class="p-2 text-left border-l ">Issued</th>
+                <th class="p-2 text-left border-l">Rent (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="p-2 text-left border-l">Status</th>
+                <th class="p-2 text-left border-l">Return</th>
+            </tr>
+
+            <tbody id="booksTableContent">
+
+                {% for t in user.issue %}
+
+                <tr id="{{ t.id }}" class="border-blue-900 border-2 border-t-0 mb-2 sm:mb-0 hover:bg-blue-50 mb-2">
+                    <td class="border-blue-900 border p-2 text-center">{{ t.id }}</td>
+                    <td class="border-blue-900 border p-2 text-center">{{ t.book_id }}</td>
+                    <td class="border-blue-900 border p-2 text-center">{{ t.issued.date() }}</td>
+                    <td class="border-blue-900 border p-2 text-center">{{ t.rent }}</td>
+                        {% if t.status %}
+                        <td id="{{t.id}}-status" data-status="{{t.status}}" class="border-blue-900 border p-2 text-center">Active</td>
+                        <td id="{{t.id}}-return" class="border-blue-900 border p-2 text-center">-
+                        </td>
+                        {% else %}
+                        <td id="{{t.id}}-status" data-status="{{t.status}}"class="border-blue-900 border p-2 text-center">Returned</td>
+                        <td id="{{t.id}}-return" class="border-blue-900 border p-2 text-center">{{ t.returned.date() }}</td>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts/books/filter.js') }}"></script>
+
+
+    {% endblock %}

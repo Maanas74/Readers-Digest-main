@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}
+Signup
+{% endblock %}
+
+{% block main %}
+
+{% if error %}
+<p id="alert" class="my-4 mx-1 w-1/2 right-0 absolute z-50 rounded-md font-bold text-xl bg-red-100 text-red-700 p-2">{{ error }}
+    <button
+        onclick="clearalert()" class="relative float-right text-white font-bold bg-black rounded-full px-2 hover:bg-gray-700"> X
+    </button>
+</p>
+{% endif %}
+
+<div class="flex flex-col lg:flex-row md:flex-row xl:flex-row justify-center pb-8">
+
+    <div class="text-center w-full lg:w-1/2 md:w-3/5 mr-2 self-center">
+        
+        <img src="{{ url_for('static', filename='img/member.svg')}}">
+        
+    </div>
+
+    <div class="px-2 text-center self-center">
+        
+        <span class="text-2xl font-bold dark:text-white">Reader's Digest</span>
+        <div class="relative mt-4 bg-white shadow-lg sm:rounded-lg text-left dark:bg-gray-200 rounded-t-md ">
+            <div class="h-3 bg-blue-700 dark:bg-blue-400 rounded-t-md"></div>
+
+            <form method="post" onsubmit="return validateForm()" name="signup">
+                <div class="py-6 px-8 pt-2">
+                    <p id="form-error" class="text-red-500 text-base italic mb-3 bg-red-50 rounded-md"></p>
+
+                    <label class="block font-semibold ">Name<sup class="text-xs font-bold text-red-600">*</sup><label>
+                        <input autocomplete="off" type="text" placeholder="User Name" name="userName"
+                        class=" border-2 w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:border-blue-600 rounded-md">
+
+                    <label class="block font-semibold mt-3">Email ID <sup class="text-xs font-bold text-red-600">*</sup><label>
+                    <input autocomplete="off" type="email" placeholder="User Email ID" name="userEmail"
+                    class=" border-2 w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:border-blue-600 rounded-md">
+                                
+                    <label class="block mt-3 font-semibold">Password <sup
+                                            class="text-xs font-bold text-red-600">*</sup><label>
+
+                                                <div class="w-full flex items-center">
+                                                    <div class="w-11/12">
+                                                        <input type="password" placeholder="User Password" name="userPassword"
+                                                class="border-2 w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:border-blue-600 rounded-md">
+                                                    </div>
+                                                    <div class="w-1/12">
+                                                        <span onclick="passEye(this)" class="w-full mt-2 p-2 fas fa-eye-slash text-xl"></span>
+                                                    </div>
+                                                </div>
+                                           
+                                        
+                                                <div class="flex justify-between items-baseline">
+                                        <button type="submit"
+                                            class="mt-4 bg-blue-700 text-white py-1 px-2 font-semibold rounded-lg hover:bg-blue-800"><span
+                                                class="text-lg">signup <i class="fas text-xl fa-hand-point-right"></i></span></button>
+                                        <a href="/"
+                                            class="text-sm text-blue-700 hover:bg-blue-100 hover:underline">Know More</a>
+                                    </div>
+                                    <hr class="my-4 border-2 border-blue-700">
+                                    <span class="text-lg">Existing User ? <a href="{{ url_for('auth.login') }}"
+                                            class="text-blue-700 hover:bg-blue-100 hover:underline">Login</a></span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    function passEye(btn)
+    {
+        if(btn.classList.contains('fa-eye-slash'))
+        {
+            btn.classList.remove('fa-eye-slash');
+            btn.classList.add('fa-eye');
+            document.forms["signup"]["userPassword"].type = 'text';
+        }
+        else
+        {
+            btn.classList.remove('fa-eye');
+            btn.classList.add('fa-eye-slash');
+            document.forms["signup"]["userPassword"].type = 'password';
+        }
+    }
+
+    function validateForm() {
+        var name = document.forms["signup"]["userName"];
+        var email = document.forms["signup"]["userEmail"];
+        var pswd = document.forms["signup"]["userPassword"];
+
+        if (email.value == "" || pswd.value == "") {
+            document.getElementById("form-error").innerHTML = "Please Fill all * Feilds";
+            document.getElementById("form-error").classList.add("p-1.5");
+
+            if (email.value == "") {
+                lname.classList.add("border-red-600");
+            }
+            if (name.value == "") {
+                lname.classList.add("border-red-600");
+            }
+            if (pswd.value == "") {
+                pswd.classList.add("border-red-600");
+            }
+
+            return false;
+        }
+        return true;
+    }
+</script>
+
+{% endblock %}

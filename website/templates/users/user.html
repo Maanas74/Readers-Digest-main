@@ -1,0 +1,209 @@
+{% extends "template.html" %}
+
+
+{% block title %}
+User ID #U{{ user_details.id }}
+{% endblock %}
+
+
+{% block script %}
+<script>
+    function addCredit() {
+        credit = document.getElementById("value").value
+        console.log(credit)
+        if(credit == "") 
+        return
+        if (credit < 100) 
+        document.getElementById('result').innerHTML = "You can't add less than 100 credits"
+        else{
+            fetch('/members/payments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    amount: credit,
+                    id: {{ user.id }}
+                })
+            }).then(res => res.json())
+                .then(data => {
+                    if(data.code == 200)
+                    {
+                        document.getElementById('result').innerHTML = `Added <i class="fas fa-rupee-sign"></i>${credit} To the Users Account`
+                        document.getElementById('userCredit').innerHTML = parseInt(document.getElementById('userCredit').innerHTML) + parseInt(credit)
+                        document.getElementById('value').value = ""
+                        const t = data.payment
+                        var date = new Date(t.date)
+                        date = date.toISOString().substring(0, 10);
+                        row = ` <tr id="${ t.id }" class="border-blue-900 border-2 border-t-0 mb-2 sm:mb-0 hover:bg-blue-50 mb-2">
+                            <td class="border-blue-900 border p-2 text-center">${t.id }</td>
+                            <td class="border-blue-900 border p-2 text-center">${ t.amount }</td>
+                            <td class="border-blue-900 border p-2 text-center">${ date }</td>
+                        </tr>`
+                        document.getElementById('usersPaymentTableContent').innerHTML += row
+                    }
+                    else
+                    {
+                        document.getElementById('result').innerHTML = data.message
+                    }
+                })
+        }
+    }
+
+    function returnBook(id)
+      {
+        fetch('/members/transactions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              id: id,
+              status: false
+            })
+          }).then(function (response) {
+            return response.json();
+          }).then(function (data) {
+              if(data.code == 200)
+              {
+                const t = data.msg
+                var date = new Date(t.issued)
+                date = date.toISOString().substring(0, 10);
+                cells = document.getElementById(id).getElementsByTagName('td')
+                cells[4].innerHTML = "Returned"
+                cells[5].innerHTML = date
+              }
+              else{
+                  document.getElementById('result').innerHTML = data.msg
+              }
+          });
+      }
+
+</script>
+{% endblock %}
+
+
+{% block content %}
+<div class="mx-2">
+    {% if user_details %}
+
+    <div class="flex flex-col md:flex-row justify-evenly">
+        <div class="w-full md:w-1/3 lg:w-1/3 flex justify-center items-center">
+            <img src="https://ui-avatars.com/api/?color=ffffff&background=1E3A8A&name={{ user_details.fname }} {{ user_details.lname }}&bold=true&size=128"
+                class="rounded-full">
+        </div>
+        <div class="w-full md:w-2/3 flex justify-evenly flex-col items-center mt-4 md:mt-0">
+            <table class="border-collapse border border-black p-1 px-2 p-2">
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Name</td>
+                    <td class="border border-black p-1 px-2 ">{{ user_details.fname }} {{ user_details.lname }}</td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Email Id</td>
+                    <td class="border border-black p-1 px-2 ">{{ user_details.email }}</td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Credits</td>
+                    <td id="userCredit" class="border border-black p-1 px-2">{{ user_details.credit }}</td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Subscribed</td>
+                    <td class="border border-black p-1 px-2 ">{{ user_details.subscribed }}</td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1 px-2 font-bold">Since</td>
+                    <td class="border border-black p-1 px-2 ">{{ user_details.created.date() }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <hr class="mt-2">
+
+    <div class="mt-4">
+
+        <div class="w-full text-xl bg-blue-900 text-white text-center py-1 mt-4 rounded-md">Issued Books</div>
+
+        <table id="userTable" class="w-full flex-no-wrap sm:bg-white overflow-hidden sm:shadow-lg my-5">
+            <tr class="text-white bg-blue-700">
+                <th class="p-2 text-left">Id</th>
+                <th class="p-2 text-left border-l ">Book</th>
+                <th class="p-2 text-left border-l ">Issued</th>
+                <th class="p-2 text-left border-l">Rent (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="p-2 text-left border-l">Status</th>
+                <th class="p-2 text-left border-l">Return</th>
+            </tr>
+
+            <tbody id="usersTableContent">
+
+                {% for t in user_details.issue %}
+
+                <tr id="{{ t.id }}" class="border-blue-900 border-2 border-t-0 mb-2 sm:mb-0 hover:bg-blue-50 mb-2">
+                    <td class="border-blue-900 border p-2 text-center">{{ t.id }}</td>
+                    <td class="border-blue-900 border p-2 text-center">{{ t.book_id }}</td>
+                    <td class="border-blue-900 border p-2 text-center">{{ t.issued.date() }}</td>
+                    <td class="border-blue-900 border p-2 text-center">{{ t.rent }}</td>
+                        {% if t.status %}
+                        <td id="{{t.id}}-status" class="border-blue-900 border p-2 text-center">Active</td>
+                        <td id="{{t.id}}-return" class="border-blue-900 border p-2 text-center"><button onclick="returnBook('{{ t.id }}')"class="text-white rounded-md font-bold px-2 hover:bg-red-600 py-1 bg-red-700">Return</button></td>
+                        {% else %}
+                        <td id="{{t.id}}-status" class="border-blue-900 border p-2 text-center">Returned</td>
+                        <td id="{{t.id}}-return" class="border-blue-900 border p-2 text-center">{{ t.returned.date() }}</td>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+    {% include 'users/admin-payments.html' %}
+
+    <div class="mt-4">
+
+        <div class="w-full text-xl bg-blue-900 text-white text-center py-1 mt-4 rounded-md">Favourite Books</div>
+
+        <table id="userTable" class="w-full flex-no-wrap sm:bg-white overflow-hidden sm:shadow-lg my-5">
+            <tr class="text-white bg-blue-700">
+                <th class="p-2 text-left border-l ">Book ID</th>
+                <th class="p-2 text-left border-l ">Issued</th>
+                <th class="p-2 text-left border-l ">Actions</th>
+            </tr>
+
+            <tbody id="usersTableContent">
+
+                {% for fav in user_details.favourites %}
+
+                <tr id="{{ fav.id }}" class="border-blue-900 border-2 border-t-0 mb-2 sm:mb-0 hover:bg-blue-50 mb-2">
+                    <td class="border-blue-900 border p-2 text-center">{{ fav.id}}</td>
+                    <td class="border-blue-900 border p-2 text-center">
+                        <button onclick="issueBook('{{fav.book_id}}')" class="py-1 px-2 bg-blue-900 shadow-md text-white rounded-lg text-lg hover:bg-blue-800">Issue</button>
+                    </td>
+                    <td class="border-blue-900 border p-2 text-center">
+                        <a href="/books/{{ fav.book_id }}"
+          class="text-center text-lg py-1 px-2 border-green-600 border rounded-xl bg-green-700 text-white hover:bg-green-900"><i class="fas fa-edit"></i>
+        </a>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+    {% else %}
+    <div class="text-center">
+        <h1 class="text-3xl font-bold">user not found</h1>
+        <a href="/users" class="text-blue-500 hover:text-blue-600">Go back</a>
+    </div>
+    {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='scripts/books/transactions.js') }}"></script>
+
+{% endblock %}

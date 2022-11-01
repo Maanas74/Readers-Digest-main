@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<div>
+
+  {% include 'nav-side-bar/nav.html' %}
+
+  <!-- Main Content -->
+  <div class="mx-auto mt-24 lg:mt-0 lg:ml-80 max-w-screen min-h-screen break-words">
+
+    <div class="fixed w-full lg:w-3/4 p-4 mx-auto lg:mx-4 my-2 bg-blue-900 text-white rounded-md">
+
+      <span class="uppercase font-bold text-2xl">
+        {% block title %}
+        {% endblock %}
+      </span>
+
+      <span class="float-right font-normal text-lg">
+        <img
+          src="https://ui-avatars.com/api/?color=111827&background=ffffff&name={{ current_user.fname }}+{{ current_user.lname }}&bold=true"
+          class="object-fill h-10 rounded-full bg-white w-10 float-left -m-1 mr-2" alt="Display Image">
+        {{ current_user.fname }}
+      </span>
+
+    </div>
+
+    <div class="m-2 pt-24">
+      <div id="container-alerts"></div>
+      {% block content %}
+      {% endblock %}
+    </div>
+
+  </div>
+
+
+</div>
+
+<script src="{{ url_for('static', filename='scripts/nav.js') }}"></script>
+<script>
+  setCurrentNav("{{ currentRoute }}");
+</script>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "template.html" %}
+
+{% block title %}
+❤️ Favourites
+{% endblock %}
+
+{% macro favbook(book) -%}
+
+<tr class="text-black text-lg border-2 border-blue-800" id="{{ book.id }}">
+    <td class="border-2 border-blue-800 p-2"><img src="{{ book.img }}" class="h-2/5" alt=""></td>
+    <td class="border-2 border-blue-800 p-2">{{ book.name }}</td>
+    <td class="border-2 border-blue-800 p-2 text-center">{{ book.likes }}</td>
+    <th class="border-2 border-blue-800 p-2">
+        <button class="text-white py-0.5 px-2 rounded-full bg-red-700 hover:bg-red-900" onclick="removeFromFavs('{{book.id}}')">Remove</button>
+        <button class="text-white py-0.5 px-2 rounded-full bg-blue-700 hover:bg-blue-900" onclick="viewBook('{{book.id}}')">View 👀</button>
+    </th>
+</tr>
+
+{%- endmacro %}
+
+{% block content %}
+
+<div class="mx-2">
+
+    <!-- Table with columns ID, name, Likes and img  -->
+    <table id="favBooks" class="table-auto w-full">
+        <thead>
+            <tr class="text-white text-xl bg-blue-800">
+                <th class="border-2 border-white px-4 py-2">Img</th>
+                <th class="border-2 border-white px-4 py-2">Name</th>
+                <th class="border-2 border-white px-4 py-2">❤️</th>
+                <th class="border-2 border-white px-4 py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fav in user.favourites %}
+            {{ favbook(fav) }}
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <script src="{{ url_for('static', filename='scripts/books/browse.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/books/favs.js') }}"></script>
+</div>
+
+{% endblock %}
